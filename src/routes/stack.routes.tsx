@@ -3,7 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 const { Screen, Navigator } = createStackNavigator();
 
 import { Home } from "../screens/home/home";
-import { Teste } from "../screens/teste/teste";
+import { Scanner } from "../screens/scanner/scanner";
 
 export function StackRoutes() {
     return (
@@ -18,8 +18,8 @@ export function StackRoutes() {
             />
 
             <Screen
-                name="teste"
-                component={Teste}
+                name="scanner"
+                component={Scanner}
                 options={{
                     title: "tela de teste",
                     headerTitleAlign: "center"

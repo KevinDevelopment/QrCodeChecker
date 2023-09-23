@@ -4,7 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 const { Screen, Navigator } = createDrawerNavigator();
 
 import { Home } from "../screens/home/home";
-import { Teste } from "../screens/teste/teste";
+import { Scanner } from "../screens/scanner/scanner";
 
 export function DrawerRoutes() {
     return (
@@ -18,8 +18,11 @@ export function DrawerRoutes() {
             />
 
             <Screen
-                name="teste"
-                component={Teste}
+                name="scanner"
+                component={Scanner}
+                options={{
+                    drawerIcon: () => <MaterialIcons name="home" size={22}/>
+                }}
             />
         </Navigator>
     );

@@ -5,7 +5,7 @@ type TParamsProps ={
     name: string
 }
 
-export function Teste() {
+export function Scanner() {
     const route = useRoute();
     const { name } = route.params as TParamsProps;
 

@@ -4,7 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 const { Screen, Navigator } = createBottomTabNavigator();
 
 import { Home } from "../screens/home/home";
-import { Teste } from "../screens/teste/teste";
+import { Scanner } from "../screens/scanner/scanner";
 
 export function TabRoutes() {
     return (
@@ -31,8 +31,8 @@ export function TabRoutes() {
             />
 
             <Screen
-                name="teste"
-                component={Teste}
+                name="scanner"
+                component={Scanner}
                 options={{
                     tabBarLabel: "teste",
                     tabBarIcon: ({ color, size }) => (

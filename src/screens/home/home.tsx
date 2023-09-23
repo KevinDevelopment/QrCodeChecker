@@ -5,7 +5,7 @@ export function Home() {
     const navigation = useNavigation();
 
     function handleOpenScreen() {
-        navigation.navigate('teste', { name: "Kevin Cristhian Gomes Ferreira" });
+        navigation.navigate('scanner', { name: "Kevin Cristhian Gomes Ferreira" });
     }
 
     return (
