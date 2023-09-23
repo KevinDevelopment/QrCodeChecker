@@ -9,11 +9,26 @@ export function Home() {
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: "grey", justifyContent: "center" }}>
-            <Button
-                title="ir para tela de teste"
-                onPress={() => handleOpenScreen()}
-            />
+        <View
+            style={{
+                flex: 1,
+                backgroundColor: "grey",
+                display: "flex", flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center"
+            }}
+        >
+            <View
+                style={{
+                    maxWidth: "100%"
+                }}
+            >
+                <Button
+                    title="Scannear"
+                    onPress={() => handleOpenScreen()}
+                />
+            </View>
         </View>
     );
 }
+
