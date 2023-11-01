@@ -40,7 +40,9 @@ export function Scanner() {
                 onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
                 style={StyleSheet.absoluteFillObject}
             />
-            {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
+            <View style={styles.button}>
+                <Button title={'Aperte aqui para escanear novamente'} onPress={() => setScanned(false)} />
+            </View>
         </View>
     );
 }
@@ -51,4 +53,12 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
     },
+    button: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 670,
+        borderRadius: 10
+    }
 });

@@ -7,7 +7,7 @@ export function Home() {
     const navigation = useNavigation();
 
     function handleOpenScreen() {
-        navigation.navigate('scanner', { name: "" });
+        navigation.navigate('scanner');
     }
 
     return (
@@ -23,7 +23,7 @@ export function Home() {
                         style={styles.touch}
                     />
                     <Text style={styles.text}>
-                        scannear
+                        Scan
                     </Text>
                 </TouchableOpacity>
             </View >
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         textShadowColor: 'rgba(0, 0, 0, 1)',
-        textShadowOffset: { width: -2, height: 2 },
+        textShadowOffset: { width: 1, height: 2 },
         textShadowRadius: 10
     },
     button: {
