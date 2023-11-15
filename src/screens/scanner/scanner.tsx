@@ -33,7 +33,9 @@ export function Scanner() {
         <View style={styles.container}>
             <BarCodeScanner
                 onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
                 style={StyleSheet.absoluteFillObject}
+                aria-modal
             />
             <View style={styles.button}>
                { scanned && <Button title={'Aperte aqui para escanear novamente'} onPress={() => setScanned(false)} />}
