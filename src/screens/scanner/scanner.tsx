@@ -10,29 +10,24 @@ export function Scanner() {
     useEffect(() => {
         const getBarCodeScannerPermissions = async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
-            setHasPermission(true);
+            setHasPermission(status === "granted");
         };
 
         getBarCodeScannerPermissions();
     }, []);
 
     const handleBarCodeScanned = ({ type, data }: any) => {
-        setScanned(true);
-
-        if (data.startsWith('http://') || data.startsWith('https://')) {
-
-            Linking.openURL(data)
-                .then(() => {
-                    console.log(`Opened link: ${data}`);
-                })
-                .catch((error) => {
-                    console.error(`Error opening link: ${data}`, error);
-                    alert(`Error opening link: ${data}`);
-                });
-        } else {
-            alert(`Bar code with type ${type} and data ${data} is not a link.`);
-        }
+        setScanned(data);
+        console.log(data);
     };
+
+    if (!hasPermission) {
+        return (
+            <View style={styles.container}>
+                <Text>Conceda permissão pra acessar a camera</Text>
+            </View>
+        )
+    }
 
     return (
         <View style={styles.container}>
@@ -41,7 +36,7 @@ export function Scanner() {
                 style={StyleSheet.absoluteFillObject}
             />
             <View style={styles.button}>
-                <Button title={'Aperte aqui para escanear novamente'} onPress={() => setScanned(false)} />
+               { scanned && <Button title={'Aperte aqui para escanear novamente'} onPress={() => setScanned(false)} />}
             </View>
         </View>
     );
