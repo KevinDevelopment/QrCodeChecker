@@ -5,7 +5,7 @@ import { useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type TRouteParams = {
-    url: string
+    url: any
 }
 
 type teste = {
@@ -22,28 +22,6 @@ export function Scanned() {
     const { url } = route.params as TRouteParams;
 
     useEffect(() => {
-        // const fetchData = async () => {
-        //     try {
-        //         const teste = await fetch("https://jsonplaceholder.typicode.com/posts", {
-        //             method: "POST",
-        //             // body: JSON.stringify({
-        //             //     url: url
-        //             // }),
-        //             headers: {
-        //                 'Content-type': 'application/json',
-        //                 "authorization": `Bearer ${token}`
-        //             }
-        //         });
-        //         console.log(teste);
-        //         setTerminated("terminou");
-        //     } catch (error) {
-        //         setTerminated(String(error));
-        //         console.error(error)
-        //     }
-        // }
-
-        // fetchData();
-
         fetch("https://jsonplaceholder.typicode.com/posts", {
             headers: {
                 'Content-type': 'application/json'                
@@ -56,17 +34,9 @@ export function Scanned() {
     }, []);
 
     return (
-        <SafeAreaView>
+        <SafeAreaView>            
             <View>
-                {
-                    terminated.map((post) => {
-                        return (
-                          <View>                            
-                            <Text>{post.title}</Text>
-                          </View>
-                        );
-                      })
-                }
+                <Text>a url que veio é {url}</Text>
             </View>
         </SafeAreaView>
     );

@@ -3,6 +3,9 @@ export declare global {
         interface RootParamList {
             home: undefined
             scanner: undefined
+            scanned: {
+                url: any
+            }
         }
     }
 }

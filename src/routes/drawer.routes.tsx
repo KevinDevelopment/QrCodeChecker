@@ -6,14 +6,15 @@ const { Screen, Navigator } = createDrawerNavigator();
 
 import { Home } from "../screens/home/home";
 import { Scanner } from "../screens/scanner/scanner";
+import { Scanned } from "../screens/scanned/home";
 
 export function DrawerRoutes() {
     return (
         <Navigator
             screenOptions={{
-               headerShown: false
+                headerShown: false
             }}
-        >          
+        >
 
             <Screen
                 name="home"
@@ -27,7 +28,15 @@ export function DrawerRoutes() {
                 name="scanner"
                 component={Scanner}
                 options={{
-                    drawerIcon: () => <MaterialIcons name="home" size={22} />
+                    drawerIcon: () => <MaterialIcons name="scanner" size={22} />
+                }}
+            />
+
+            <Screen
+                name="scanned"
+                component={Scanned}
+                options={{
+                    drawerIcon: () => <MaterialIcons name="scanner" size={22} />
                 }}
             />
         </Navigator>

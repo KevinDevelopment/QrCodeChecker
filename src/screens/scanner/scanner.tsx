@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Linking } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
 export function Scanner() {
     const [hasPermission, setHasPermission] = useState(false);
     const [scanned, setScanned] = useState(false);
+    const navigation = useNavigation();
 
-    useEffect(() => {
+    useEffect(() => {        
         const getBarCodeScannerPermissions = async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
             setHasPermission(status === "granted");
@@ -17,8 +19,8 @@ export function Scanner() {
     }, []);
 
     const handleBarCodeScanned = ({ type, data }: any) => {
-        setScanned(data);
-        console.log(data);
+        setScanned(data);       
+        navigation.navigate("scanned", { url: data });
     };
 
     if (!hasPermission) {
@@ -31,6 +33,7 @@ export function Scanner() {
 
     return (
         <View style={styles.container}>
+            <Text>{scanned}</Text>
             <BarCodeScanner
                 onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
                 barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
