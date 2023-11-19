@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Button, ButtonText, ButtonIcon } from '@gluestack-ui/themed';
+import { GluestackUIProvider } from '@gluestack-ui/themed';
+import { config } from "@gluestack-ui/config";
 import { Linking } from 'react-native';
+import { IoIosQrScanner } from "react-icons/io";
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
 export function Scanner() {
@@ -9,7 +13,7 @@ export function Scanner() {
     const [scanned, setScanned] = useState(false);
     const navigation = useNavigation();
 
-    useEffect(() => {        
+    useEffect(() => {
         const getBarCodeScannerPermissions = async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
             setHasPermission(status === "granted");
@@ -19,8 +23,8 @@ export function Scanner() {
     }, []);
 
     const handleBarCodeScanned = ({ type, data }: any) => {
-        setScanned(data);       
-        navigation.navigate("scanned", { url: data });
+        setScanned(data);
+        // navigation.navigate("scanned", { url: data });
     };
 
     if (!hasPermission) {
@@ -32,18 +36,26 @@ export function Scanner() {
     }
 
     return (
-        <View style={styles.container}>
-            <Text>{scanned}</Text>
-            <BarCodeScanner
-                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-                barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
-                style={StyleSheet.absoluteFillObject}
-                aria-modal
-            />
-            <View style={styles.button}>
-               { scanned && <Button title={'Aperte aqui para escanear novamente'} onPress={() => setScanned(false)} />}
+        <GluestackUIProvider config={config}>
+            <View style={styles.container}>
+                {scanned && <Text style={styles.url}>{scanned}</Text>}
+                <BarCodeScanner
+                    onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                    barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
+                    style={StyleSheet.absoluteFillObject}
+                    aria-modal
+                />
+                <View style={styles.button}>
+                    {scanned &&
+
+                        <Button size="md" onPress={() => setScanned(false)} variant="solid" action="primary" isDisabled={false} isFocusVisible={false} >
+                            <ButtonText>Escanear novamente</ButtonText>                            
+                        </Button>
+
+                    }
+                </View>
             </View>
-        </View>
+        </GluestackUIProvider>
     );
 }
 
@@ -51,6 +63,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
+        alignItems: "center",
         justifyContent: 'center',
     },
     button: {
@@ -59,6 +72,17 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginTop: 670,
-        borderRadius: 10
+
+    },
+    url: {
+        width: "80%",
+        textAlign: "center",
+        backgroundColor: "red",
+        borderRadius: 10,
+        padding: 5,
+        color: "white"
+    },
+    internButton: {
+
     }
 });

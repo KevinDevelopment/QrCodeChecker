@@ -4,7 +4,7 @@ export declare global {
             home: undefined
             scanner: undefined
             scanned: {
-                url: any
+                url: string
             }
         }
     }
