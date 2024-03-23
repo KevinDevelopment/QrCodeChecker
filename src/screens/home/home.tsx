@@ -1,7 +1,7 @@
-import { View, Button, StyleSheet, TouchableOpacity, Text, Image } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { ImageBackground } from "react-native";
-const image = { uri: '../../../assets/WhatsApp Image 2023-10-30 at 19.51.22 (1).jpeg' };
+import { SafeAreaView } from "react-native-safe-area-context"
+import { useNavigation } from "@react-navigation/native"
+import { VStack, Box, View } from "@gluestack-ui/themed"
+import { Image, Text, Button } from "react-native";
 
 export function Home() {
     const navigation = useNavigation();
@@ -11,59 +11,32 @@ export function Home() {
     }
 
     return (
-        <ImageBackground source={require("../../../assets/detetive.jpg")} resizeMode="stretch" style={styles.image}>
-
-            <View style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: 730 }}>                
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => handleOpenScreen()}
-                >
+        <SafeAreaView>
+            <Box style=
+                {{
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: 20
+                }}>
+                <VStack style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
                     <Image
-                        source={require('../../../assets/lupa.png')}
-                        style={styles.touch}
+                        style={{ width: 200, height: 200 }}
+                        source={require("../../../assets/tabler_qrcode.png")}
                     />
-                    <Text style={styles.text}>
-                        Scan
-                    </Text>
-                </TouchableOpacity>
-            </View >
-
-        </ImageBackground>
+                    <Text style={{ fontSize: 24, fontWeight: "bold" }}>Nenhum código ainda</Text>
+                    <Text style={{ marginTop: 8, fontSize: 16, textAlign: "center" }}>Parece que você ainda não escaneou nenhum código QR.</Text>
+                    <View style={{ width: "95%", marginTop: 16 }}>
+                        <Button onPress={() => handleOpenScreen()} title="Escanear"></Button>
+                    </View>
+                </VStack>
+            </Box>
+        </SafeAreaView>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    image: {
-        flex: 1,
-        justifyContent: 'center',
-    },
-    text: {
-        color: 'white',
-        fontSize: 30,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        textShadowColor: 'rgba(0, 0, 0, 1)',
-        textShadowOffset: { width: 1, height: 2 },
-        textShadowRadius: 10
-    },
-    button: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-evenly",
-        backgroundColor: "white",
-        width: "70%",
-        height: "70%",
-        borderRadius: 10
-    },
-    touch: {
-        width: 100,
-        height: 60
-    }
-});
+
 
 
 

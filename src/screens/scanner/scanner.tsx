@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Button, ButtonText, ButtonIcon } from '@gluestack-ui/themed';
-import { GluestackUIProvider } from '@gluestack-ui/themed';
-import { config } from "@gluestack-ui/config";
-import { Linking } from 'react-native';
-import { IoIosQrScanner } from "react-icons/io";
+import { SafeAreaView } from "react-native-safe-area-context"
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
 export function Scanner() {
@@ -43,106 +39,101 @@ export function Scanner() {
     if (hasPermission === false) {
         <View style={styles.container}>
             <Text>Sem acesso a camera</Text>
-            <Button size="md" onPress={() => asKForCameraPermission()} variant="solid" action="primary" isDisabled={false} isFocusVisible={false} >
-                <ButtonText>Permitir</ButtonText>
-            </Button>
+            <View style={{ width: "95%", marginTop: 16 }}>
+                <Button onPress={() => asKForCameraPermission()} title="Permitir"></Button>
+            </View>
         </View>
     }
 
-    // if (!hasPermission) {
-    //     return (
-    //         <View style={styles.container}>
-    //             <Text>Conceda permissão pra acessar a camera</Text>
-    //         </View>
-    //     )
-    // }
+    if (!hasPermission) {
+        return (
+            <View style={styles.container}>
+                <Text>Conceda permissão pra acessar a camera</Text>
+            </View>
+        )
+    }
+
+    const resetScanner = () => {
+        // setScanned(false);
+        // setText("Urls escaneadas apareceram aqui");
+        scanUrl()
+    }
 
     return (
-        <GluestackUIProvider config={config}>
-            <View style={styles.container}>
-                {/* {scanned && <Text style={styles.url}>{text}</Text>}
-                <BarCodeScanner
-                    onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-                    barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
-                    style={StyleSheet.absoluteFillObject}
-                    aria-modal
-                />
-                <View style={styles.button}>
-                    {scanned &&
-
-                        <Button size="md" onPress={() => setScanned(false)} variant="solid" action="primary" isDisabled={false} isFocusVisible={false} >
-                            <ButtonText>Escanear novamente</ButtonText>
-                        </Button>
-
-                    }
-                </View> */}
-                <Text style={styles.mainText}>{text}</Text>
-                <View style={styles.barCodeBox}>
-                    <BarCodeScanner
-                        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-                        barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
-                        style={{ height: 400, width: 400 }}
-                        aria-modal
-                    />
+        <SafeAreaView style={{ flex: 1 }}>
+            <BarCodeScanner
+                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
+                style={{ flex: 1 }}
+            >
+                <View style={styles.centeredView}>
+                    <View style={styles.cornerTopLeft}></View>
+                    <View style={styles.cornerTopRight}></View>
+                    <View style={styles.cornerBottomLeft}></View>
+                    <View style={styles.cornerBottomRight}></View>
                 </View>
-
-                <Button style={styles.button} size="md" onPress={() => setScanned(false)} variant="solid" action="primary" isDisabled={false} isFocusVisible={false} >
-                    <ButtonText>Escanear novamente</ButtonText>
-                </Button>
-
-                {scanned &&
-
-                    <Button style={styles.button} size="md" onPress={() => scanUrl()} variant="solid" action="primary" isDisabled={false} isFocusVisible={false} >
-                        <ButtonText>Analizar Url</ButtonText>
-                    </Button>
-
-                }
+            </BarCodeScanner>
+            <View style={{ width: "100%" }}>
+                <Button onPress={() => resetScanner()} title="Escanear novemente"></Button>
             </View>
-        </GluestackUIProvider>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    cornerTopLeft: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        width: 130,
+        height: 130,
+        borderColor: 'white',
+        borderWidth: 3,
+        borderLeftWidth: 0,
+        borderTopWidth: 0,
+    },
+    cornerTopRight: {
+        position: 'absolute',
+        top: '50%',
+        right: '50%',
+        width: 130,
+        height: 130,
+        borderColor: 'white',
+        borderWidth: 3,
+        borderRightWidth: 0,
+        borderTopWidth: 0,
+    },
+    cornerBottomLeft: {
+        position: 'absolute',
+        bottom: '50%',
+        left: '50%',
+        width: 130,
+        height: 130,
+        borderColor: 'white',
+        borderWidth: 3,
+        borderLeftWidth: 0,
+        borderBottomWidth: 0,
+    },
+    cornerBottomRight: {
+        position: 'absolute',
+        bottom: '50%',
+        right: '50%',
+        width: 130,
+        height: 130,
+        borderColor: 'white',
+        borderWidth: 3,
+        borderRightWidth: 0,
+        borderBottomWidth: 0,
+    },
     container: {
         flex: 1,
         flexDirection: 'column',
         alignItems: "center",
         justifyContent: 'center',
     },
-    button: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 10,
-        minWidth: "70%",
-        minHeight: "6%",
-        marginBottom: 10
-    },
-    url: {
-        width: "80%",
-        textAlign: "center",
-        backgroundColor: "red",
-        borderRadius: 10,
-        padding: 5,
-        color: "white"
-    },
-    barCodeBox: {
-        backgroundColor: "tomato",
-        alignItems: "center",
-        justifyContent: "center",
-        height: 300,
-        width: 300,
-        overflow: "hidden",
-        borderRadius: 30,
-        marginBottom: 100,
-        marginTop: 60
-    },
-    mainText: {
-        fontSize: 16,
-        backgroundColor: "#8600c6",
-        borderRadius: 10,
-        padding: 10,
-        color: "white"
-    }
 });
