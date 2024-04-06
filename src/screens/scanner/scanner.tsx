@@ -21,13 +21,14 @@ export function Scanner() {
 
     useEffect(() => {
         asKForCameraPermission()
+        setScanned(false);
     }, []);
 
     const handleBarCodeScanned = ({ type, data }: any) => {
         setScanned(true);
         setText(data);
-        console.log(`o tipo é ${type}`)
-        // navigation.navigate("scanned", { url: data });
+        console.log(`a url escaneada é ${data}`)
+        navigation.navigate("scanned", { url: data });
     };
 
     if (hasPermission === null) {
@@ -54,13 +55,14 @@ export function Scanner() {
     }
 
     const resetScanner = () => {
-        // setScanned(false);
-        // setText("Urls escaneadas apareceram aqui");
-        scanUrl()
+        setScanned(false);
+        setText("Urls escaneadas apareceram aqui");
+        // scanUrl()
     }
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
+            <Text>{text}</Text>
             <BarCodeScanner
                 onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
                 barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
@@ -73,9 +75,9 @@ export function Scanner() {
                     <View style={styles.cornerBottomRight}></View>
                 </View>
             </BarCodeScanner>
-            <View style={{ width: "100%" }}>
+            {/* <View style={{ width: "100%" }}>
                 <Button onPress={() => resetScanner()} title="Escanear novemente"></Button>
-            </View>
+            </View> */}
         </SafeAreaView>
     );
 }
