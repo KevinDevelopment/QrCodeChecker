@@ -8,7 +8,7 @@ type Stats = {
   suspicious: number;
   undetected: number;
   harmless: number;
-  timeout?: number; // Incluído como opcional, se for necessário
+  timeout?: number;
 }
 
 export function Scanned({ route }: any) {
@@ -37,17 +37,17 @@ export function Scanned({ route }: any) {
     fetchData()
   }, [url])
 
-  function classificaUrl(stats?: Stats): string {
+  function verifyUrl(stats?: Stats): string {
     if (!stats) {
-      return 'Dados não disponíveis'; // Ou outra mensagem apropriada
+      return 'Dados não disponíveis'
     }
-  
+
     const maxKey = Object.keys(stats).reduce((a, b) => {
       const valA = stats[a as keyof Stats] ?? 0;
       const valB = stats[b as keyof Stats] ?? 0;
       return valA > valB ? a : b;
     }) as keyof Stats;
-  
+
     switch (maxKey) {
       case 'malicious':
         return 'O site é malicioso!';
@@ -61,6 +61,8 @@ export function Scanned({ route }: any) {
     }
   }
 
+  const result = verifyUrl(analisyData)
+  
   return (
     <SafeAreaView style={{ backgroundColor: "#ffffff", flex: 1 }}>
       <View style={{ width: "100%", height: "100%" }}>
@@ -101,8 +103,8 @@ export function Scanned({ route }: any) {
               }}
             />
             <View style={{ marginLeft: 10 }}>
-              <Text style={{ fontSize: 16, color: "#008005", fontWeight: "bold" }}>{classificaUrl(analisyData)}</Text>
-              <Text style={{ fontSize: 14 }}>Limpo: 10 | Suspeito: 0 | Perigoso: 0</Text>
+              <Text style={{ fontSize: 16, color: "#008005", fontWeight: "bold" }}>{result}</Text>
+              <Text style={{ fontSize: 14 }}>Limpo: {analisyData?.harmless} | Suspeito: {analisyData?.suspicious}  | Perigoso: {analisyData?.malicious}</Text>
             </View>
           </View>
         </View>
@@ -114,7 +116,7 @@ export function Scanned({ route }: any) {
 
           <View style={{ width: "95%", height: 58, marginTop: 10, backgroundColor: "#fafafa", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
             <View>
-              <Text style={{ fontSize: 16, fontWeight: "bold" }}>url scaneada aqui</Text>
+              <Text style={{ fontSize: 16, fontWeight: "bold" }}>{url}</Text>
               <Text style={{ fontSize: 14 }}>Agora - <Text style={{ color: "#008005" }}>100% safe</Text></Text>
             </View>
             <View>
