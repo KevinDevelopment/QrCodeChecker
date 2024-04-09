@@ -12,7 +12,7 @@ export function DrawerRoutes() {
     return (
         <Navigator
             screenOptions={{
-                headerShown: false
+                headerShown: true
             }}
         >
 
