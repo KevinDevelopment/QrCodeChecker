@@ -6,6 +6,9 @@ export declare global {
             scanned: {
                 url: string
             }
+            details: {
+                url: string
+            }
         }
     }
 }

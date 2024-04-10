@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { View, Text, Image, TouchableOpacity, Linking, Button } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { api } from "../../utils/verify-url"
 
 type Stats = {
@@ -23,10 +22,15 @@ type AntivirusResults = {
   [key: string]: AntivirusResult;
 };
 
-export function Scanned({ route }: any) {
-  const navigation = useNavigation();
+interface SimplifiedResult {
+  engine_name: string;
+  result: string;
+}
+
+export function Details({ route }: any) {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [antivirusData, setAntivirusData] = useState<AntivirusResults>({});
+  const [simplifiedData, setSimplifiedData] = useState<SimplifiedResult[]>([]);
   const [analisyData, setAnalisyData] = useState<Stats>({
     harmless: 0,
     malicious: 0,
@@ -35,65 +39,47 @@ export function Scanned({ route }: any) {
   })
   const { url } = route.params
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       if (url) {
+  //         setIsLoading(true); // Inicia o carregamento
+  //         const { data } = await api.post("/url", { url });
+  //         setAntivirusData(data?.data?.attributes?.results)
+  //       }
+  //     } catch (error) {
+  //       console.error(error);
+  //     } finally {
+  //       setIsLoading(false); // Finaliza o carregamento
+  //     }
+  //   };
+  //   fetchData();
+  // }, [url]);
+
+  
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (url) {
-          setIsLoading(true); // Inicia o carregamento
-          const { data } = await api.post("/url", { url });
-          setAnalisyData(data?.data?.attributes?.stats);
-          setAntivirusData(data?.data?.attributes?.results)
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false); // Finaliza o carregamento
-      }
-    };
-    fetchData();
-  }, [url]);
+    setIsLoading(false)
+  }, [])
 
-  type StatusType = 'confiavel' | 'nao-confiavel' | 'perigoso' | 'nao-disponivel';
-
-  const colorMap = {
-    confiavel: '#008005', // Verde para confiável
-    "nao-confiavel": '#FFA500', // Amarelo para não confiável
-    perigoso: '#B20000', // Vermelho para perigoso
-    "nao-disponivel": '#000000' // Preto para dados não disponíveis
+  const resultTranslations: { [key: string]: string } = {
+    "clean": "limpo",
+    "malicious": "malicioso",
+    "phishing": "phishing",
+    "unrated": "não avaliado",
+    // Adicione mais traduções conforme necessário
   };
 
-  function verifyUrl(stats: Stats): { status: StatusType, message: string } {
-    if (!stats) {
-      return { status: 'nao-disponivel', message: 'Dados não disponíveis' };
-    }
+  const createAntivirusArray = (antivirusResults: AntivirusResults) => {
+    return Object.entries(antivirusResults)
+      .filter(([_, result]) => result.category === 'malicious' || result.category === 'suspicious')
+      .map(([_, { engine_name, result }]) => ({
+        engine_name,
+        result: resultTranslations[result] || result
+      }));
+  };
 
-    if (stats.malicious > 0) {
-      return { status: 'perigoso', message: 'O site é perigoso!' };
-    }
-
-    if (stats.suspicious === 0) {
-      return { status: 'confiavel', message: 'O site é confiável!' };
-    } else if (stats.suspicious <= 5) {
-      return { status: 'nao-confiavel', message: 'O site não é confiável.' };
-    } else {
-      return { status: 'perigoso', message: 'O site é perigoso!' };
-    }
-  }
-
-  // Em seu componente
-  const { status, message } = verifyUrl(analisyData);
-
-  const imageMap = {
-    confiavel: require("../../../assets/checkmark-circle-24-filled.png"), // Exemplo de imagem para status confiável
-    "nao-confiavel": require("../../../assets/Subtract.png"), // Exemplo de imagem para status não confiável
-    perigoso: require("../../../assets/Group.png"), // Exemplo de imagem para status perigoso
-    "nao-disponivel": require("../../../assets/Group.png") // Imagem padrão ou para dados não disponíveis
-  }
-  const statusImage = imageMap[status];
-
-  function navigateToDetails() {
-    navigation.navigate("details", { url: url });
-  }
+  const result = createAntivirusArray(antivirusData)
+  console.log(result)
 
   return (
     <SafeAreaView style={{ backgroundColor: "#ffffff", flex: 1 }}>
@@ -136,29 +122,34 @@ export function Scanned({ route }: any) {
             <Text style={{ fontWeight: "bold", fontSize: 14 }}>{url}</Text>
           </View>
 
-          <View style={{ width: "100%", alignItems: "center", marginTop: 24 }}>
-            <View style={{ width: "95%", height: 66, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: "#fafafa" }}>
+
+          <View style={{ width: "95%", padding: 12, height: 58, marginTop: 10, backgroundColor: "#fafafa", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+            <View style={{ flex: 1, marginRight: 10 }}>
+              <Text
+                style={{ fontSize: 14, fontWeight: "bold" }}
+                numberOfLines={1}
+                ellipsizeMode='tail'
+              >
+                {url}
+              </Text>
+            </View>
+            <View style={{ display:"flex", flexDirection: "row", alignItems: "center" }}>
               <Image
-                source={statusImage}
+                source={require("../../../assets/icon-size.png")}
                 style={{
                   width: 30,
-                  height: 30
+                  height: 30,
+                  marginLeft: 24
                 }}
               />
-              <View style={{ marginLeft: 10 }}>
-                <Text style={{ fontSize: 16, color: colorMap[status], fontWeight: "bold" }}>{message}</Text>
-                {/* <Text style={{ fontSize: 14 }}>Limpo: {analisyData?.harmless} | Suspeito: {analisyData?.suspicious}  | Perigoso: {analisyData?.malicious}</Text> */}
-              </View>
+              <Text>rererr</Text>
             </View>
           </View>
+
 
           <View style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", paddingBottom: 30 }}>
             <View style={{ width: "95%" }}>
               <Button onPress={() => null} title="Novo Qr"></Button>
-            </View>
-
-            <View style={{ width: "95%", marginTop: 10 }}>
-              <Button onPress={() => navigateToDetails()} title="Detalhes"></Button>
             </View>
 
             <View style={{ width: "95%", height: 58, marginTop: 10, backgroundColor: "#fafafa", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
