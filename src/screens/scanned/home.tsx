@@ -51,7 +51,7 @@ export function Scanned({ route }: any) {
       }
     };
     fetchData();
-  }, [url]);
+  }, [url]) 
 
   type StatusType = 'confiavel' | 'nao-confiavel' | 'perigoso' | 'nao-disponivel';
 
@@ -91,8 +91,8 @@ export function Scanned({ route }: any) {
   }
   const statusImage = imageMap[status];
 
-  function navigateToDetails() {
-    navigation.navigate("details", { url: url });
+  function handleOpenScreen() {
+    navigation.navigate('scanner');
   }
 
   return (
@@ -158,7 +158,7 @@ export function Scanned({ route }: any) {
             </View>
 
             <View style={{ width: "95%", marginTop: 10 }}>
-              <Button onPress={() => navigateToDetails()} title="Detalhes"></Button>
+              <Button onPress={() => handleOpenScreen()} title="Detalhes"></Button>
             </View>
 
             <View style={{ width: "95%", height: 58, marginTop: 10, backgroundColor: "#fafafa", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>

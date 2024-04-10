@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { View, Text, Image, TouchableOpacity, Linking, Button } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Linking, Button,ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { api } from "../../utils/verify-url"
 
 type Stats = {
@@ -28,6 +29,7 @@ interface SimplifiedResult {
 }
 
 export function Details({ route }: any) {
+   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [antivirusData, setAntivirusData] = useState<AntivirusResults>({});
   const [simplifiedData, setSimplifiedData] = useState<SimplifiedResult[]>([]);
@@ -39,27 +41,22 @@ export function Details({ route }: any) {
   })
   const { url } = route.params
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       if (url) {
-  //         setIsLoading(true); // Inicia o carregamento
-  //         const { data } = await api.post("/url", { url });
-  //         setAntivirusData(data?.data?.attributes?.results)
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //     } finally {
-  //       setIsLoading(false); // Finaliza o carregamento
-  //     }
-  //   };
-  //   fetchData();
-  // }, [url]);
-
-  
   useEffect(() => {
-    setIsLoading(false)
-  }, [])
+    const fetchData = async () => {
+      try {
+        if (url) {
+          setIsLoading(true); // Inicia o carregamento
+          const { data } = await api.post("/url", { url });
+          setAntivirusData(data?.data?.attributes?.results)
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false); // Finaliza o carregamento
+      }
+    };
+    fetchData();
+  }, [url]) 
 
   const resultTranslations: { [key: string]: string } = {
     "clean": "limpo",
@@ -76,10 +73,13 @@ export function Details({ route }: any) {
         engine_name,
         result: resultTranslations[result] || result
       }));
-  };
+  }
+
+  function handleOpenScreen() {
+    navigation.navigate('scanner');
+}
 
   const result = createAntivirusArray(antivirusData)
-  console.log(result)
 
   return (
     <SafeAreaView style={{ backgroundColor: "#ffffff", flex: 1 }}>
@@ -122,34 +122,44 @@ export function Details({ route }: any) {
             <Text style={{ fontWeight: "bold", fontSize: 14 }}>{url}</Text>
           </View>
 
+          <ScrollView style={{ flex: 1 }}>
+          {
+            result.length > 0 ?
+              result.map((obj, index) => {
+                return (
+                  <View key={index} style={{ width: "95%", padding: 12, height: 58, marginTop: 10, backgroundColor: "#fafafa", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                    <View style={{ flex: 1, marginRight: 10 }}>
+                      <Text
+                        style={{ fontSize: 14, fontWeight: "bold" }}
+                        numberOfLines={1}
+                        ellipsizeMode='tail'
+                      >
+                        {obj?.engine_name}
+                      </Text>
+                    </View>
+                    <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                      <Image
+                        source={require("../../../assets/Group.png")}
+                        style={{
+                          width: 30,
+                          height: 30,
+                          marginLeft: 24
+                        }}
+                      />
+                      <Text style={{ marginLeft: 5 }}>{obj?.result}</Text>
+                    </View>
+                  </View>
+                );
+              })
+              :
+              <Text>Sem resultados</Text>}
+        </ScrollView>
 
-          <View style={{ width: "95%", padding: 12, height: 58, marginTop: 10, backgroundColor: "#fafafa", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-            <View style={{ flex: 1, marginRight: 10 }}>
-              <Text
-                style={{ fontSize: 14, fontWeight: "bold" }}
-                numberOfLines={1}
-                ellipsizeMode='tail'
-              >
-                {url}
-              </Text>
-            </View>
-            <View style={{ display:"flex", flexDirection: "row", alignItems: "center" }}>
-              <Image
-                source={require("../../../assets/icon-size.png")}
-                style={{
-                  width: 30,
-                  height: 30,
-                  marginLeft: 24
-                }}
-              />
-              <Text>rererr</Text>
-            </View>
-          </View>
 
 
           <View style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", paddingBottom: 30 }}>
             <View style={{ width: "95%" }}>
-              <Button onPress={() => null} title="Novo Qr"></Button>
+              <Button onPress={() => handleOpenScreen()} title="Novo Qr"></Button>
             </View>
 
             <View style={{ width: "95%", height: 58, marginTop: 10, backgroundColor: "#fafafa", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
