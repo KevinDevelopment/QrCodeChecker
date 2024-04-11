@@ -51,7 +51,11 @@ export function Scanned({ route }: any) {
       }
     };
     fetchData();
-  }, [url]) 
+  }, [url])
+
+  function handleOpenScreen() {
+    navigation.navigate('scanner');
+  }
 
   type StatusType = 'confiavel' | 'nao-confiavel' | 'perigoso' | 'nao-disponivel';
 
@@ -91,8 +95,8 @@ export function Scanned({ route }: any) {
   }
   const statusImage = imageMap[status];
 
-  function handleOpenScreen() {
-    navigation.navigate('scanner');
+  function navigateToDetails() {
+    navigation.navigate("details", { url: url });
   }
 
   return (
@@ -133,7 +137,7 @@ export function Scanned({ route }: any) {
                 height: 200,
               }}
             />
-            <Text style={{ fontWeight: "bold", fontSize: 14 }}>{url}</Text>
+            <Text style={{ fontWeight: "bold", fontSize: 14, padding: 12 }}>{url}</Text>
           </View>
 
           <View style={{ width: "100%", alignItems: "center", marginTop: 24 }}>
@@ -154,11 +158,15 @@ export function Scanned({ route }: any) {
 
           <View style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", paddingBottom: 30 }}>
             <View style={{ width: "95%" }}>
-              <Button onPress={() => null} title="Novo Qr"></Button>
+              <Button onPress={() => handleOpenScreen()} title="Novo Qr"></Button>
             </View>
 
             <View style={{ width: "95%", marginTop: 10 }}>
-              <Button onPress={() => handleOpenScreen()} title="Detalhes"></Button>
+              <Button
+                onPress={() => navigateToDetails()}
+                title="Detalhes"
+                disabled={status === 'confiavel'} // Desabilita o botão se o site for confiável
+              />
             </View>
 
             <View style={{ width: "95%", height: 58, marginTop: 10, backgroundColor: "#fafafa", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>

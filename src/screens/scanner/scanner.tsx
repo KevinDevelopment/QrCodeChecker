@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from "react-native-safe-area-context"
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { useFocusEffect } from '@react-navigation/native';
 
 export function Scanner() {
     const [hasPermission, setHasPermission] = useState(false);
@@ -22,7 +23,7 @@ export function Scanner() {
     useEffect(() => {
         asKForCameraPermission()
         setScanned(false);
-    }, []);
+    }, [])
 
     const handleBarCodeScanned = ({ type, data }: any) => {
         setScanned(true);

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { View, Text, Image, TouchableOpacity, Linking, Button,ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Linking, Button, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { api } from "../../utils/verify-url"
 
@@ -29,7 +29,7 @@ interface SimplifiedResult {
 }
 
 export function Details({ route }: any) {
-   const navigation = useNavigation();
+  const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [antivirusData, setAntivirusData] = useState<AntivirusResults>({});
   const [simplifiedData, setSimplifiedData] = useState<SimplifiedResult[]>([]);
@@ -56,7 +56,7 @@ export function Details({ route }: any) {
       }
     };
     fetchData();
-  }, [url]) 
+  }, [url])
 
   const resultTranslations: { [key: string]: string } = {
     "clean": "limpo",
@@ -77,7 +77,11 @@ export function Details({ route }: any) {
 
   function handleOpenScreen() {
     navigation.navigate('scanner');
-}
+  }
+
+  function handleOpenScanned() {
+    navigation.navigate('scanned', { url: url })
+  }
 
   const result = createAntivirusArray(antivirusData)
 
@@ -97,14 +101,17 @@ export function Details({ route }: any) {
       ) : (
         <View style={{ width: "100%", height: "100%" }}>
           <View style={{ width: "100%", height: "10%", display: "flex", flexDirection: "row", alignItems: "center" }}>
-            <View style={{ width: "40%", paddingLeft: 19 }}>
-              <Image
-                source={require("../../../assets/arrow-back.png")}
-                style={{
-                  width: 30,
-                  height: 30,
-                }}
-              />
+            <View style={{ width: "40%" }}>
+              <TouchableOpacity onPress={() => handleOpenScanned()}>
+                <Image
+                  source={require("../../../assets/arrow-back.png")}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    marginLeft: 24
+                  }}
+                />
+              </TouchableOpacity>
             </View>
             <View style={{ width: "60%" }}>
               <Text style={{ fontWeight: "bold", fontSize: 16 }}>QR CODE</Text>
@@ -123,37 +130,37 @@ export function Details({ route }: any) {
           </View>
 
           <ScrollView style={{ flex: 1 }}>
-          {
-            result.length > 0 ?
-              result.map((obj, index) => {
-                return (
-                  <View key={index} style={{ width: "95%", padding: 12, height: 58, marginTop: 10, backgroundColor: "#fafafa", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                    <View style={{ flex: 1, marginRight: 10 }}>
-                      <Text
-                        style={{ fontSize: 14, fontWeight: "bold" }}
-                        numberOfLines={1}
-                        ellipsizeMode='tail'
-                      >
-                        {obj?.engine_name}
-                      </Text>
+            {
+              result.length > 0 ?
+                result.map((obj, index) => {
+                  return (
+                    <View key={index} style={{ width: "95%", padding: 12, height: 58, marginTop: 10, backgroundColor: "#fafafa", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                      <View style={{ flex: 1, marginRight: 10 }}>
+                        <Text
+                          style={{ fontSize: 14, fontWeight: "bold" }}
+                          numberOfLines={1}
+                          ellipsizeMode='tail'
+                        >
+                          {obj?.engine_name}
+                        </Text>
+                      </View>
+                      <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <Image
+                          source={require("../../../assets/Group.png")}
+                          style={{
+                            width: 30,
+                            height: 30,
+                            marginLeft: 24
+                          }}
+                        />
+                        <Text style={{ marginLeft: 5 }}>{obj?.result}</Text>
+                      </View>
                     </View>
-                    <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                      <Image
-                        source={require("../../../assets/Group.png")}
-                        style={{
-                          width: 30,
-                          height: 30,
-                          marginLeft: 24
-                        }}
-                      />
-                      <Text style={{ marginLeft: 5 }}>{obj?.result}</Text>
-                    </View>
-                  </View>
-                );
-              })
-              :
-              <Text>Sem resultados</Text>}
-        </ScrollView>
+                  );
+                })
+                :
+                <Text>Sem resultados</Text>}
+          </ScrollView>
 
 
 
