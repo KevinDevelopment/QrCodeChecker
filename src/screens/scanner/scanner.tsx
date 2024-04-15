@@ -1,89 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from "react-native-safe-area-context"
-import { BarCodeScanner } from 'expo-barcode-scanner';
-import { useFocusEffect } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { Text, View, StyleSheet, Button } from 'react-native';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Camera, CameraType } from 'expo-camera';
 
 export function Scanner() {
-    const [hasPermission, setHasPermission] = useState(false);
-    const [scanned, setScanned] = useState(false);
-    const [text, setText] = useState("Urls escaneadas apareceram aqui");
     const navigation = useNavigation();
+    const [type, setType] = useState(CameraType.back);
+    const [scanned, setScanned] = useState(false);
+    const [text, setText] = useState("Urls escaneadas aparecerão aqui");
+    const [permission, requestPermission] = Camera.useCameraPermissions();
+    const [key, setKey] = useState(0)
 
-    async function askForCameraPermission() {
-        const { status } = await BarCodeScanner.requestPermissionsAsync();
-        if (status !== 'granted') {
-            Alert.alert(
-                "Permissão Necessária",
-                "Este aplicativo precisa de acesso à câmera para escanear QR codes.",
-                [
-                    { text: "Cancelar", style: "cancel" },
-                    { text: "Permitir", onPress: () => BarCodeScanner.requestPermissionsAsync() }
-                ]
-            );
-        }
-        setHasPermission(status === "granted");
-    }
+    useFocusEffect(
+        React.useCallback(() => {
+            setScanned(false);
+            setText("Urls escaneadas aparecerão aqui");
+            setKey(prevKey => prevKey + 1); // Incrementa a chave para forçar a remontagem
+        }, [])
+    );
 
-    function scanUrl() {
-        navigation.navigate("scanned", { url: text });
-    }    
+    useEffect(() => {
+        setScanned(false)
+    }, [])
 
-    const handleBarCodeScanned = ({ type, data }: any) => {
-        setScanned(true);
-        setText(data);
-        console.log(`a url escaneada é ${data}`)
-        navigation.navigate("scanned", { url: data });
-    };
-
-    if (hasPermission === null) {
+    if (!permission) {
         return <View style={styles.container}><Text>Requisitando permissão...</Text></View>;
     }
-    
-    if (hasPermission === false) {
+
+    if (!permission.granted) {
         return (
             <View style={styles.container}>
                 <Text>Sem acesso à câmera</Text>
-                <View style={{ width: "95%", marginTop: 16 }}>
-                    <Button onPress={askForCameraPermission} title="Permitir"></Button>
-                </View>
+                <Button onPress={() => requestPermission()} title="Permitir Acesso" />
             </View>
         );
     }
 
-    if (!hasPermission) {
-        return (
-            <View style={styles.container}>
-                <Text>Conceda permissão pra acessar a camera</Text>
-            </View>
-        )
-    }
-
-    const resetScanner = () => {
-        setScanned(false);
-        setText("Urls escaneadas apareceram aqui");
-        // scanUrl()
-    }
+    const handleBarCodeScanned = ({ type, data }: any) => {
+        if (!scanned) {
+            setScanned(true);
+            setText(data);
+            console.log(`A URL escaneada é ${data}`);
+            navigation.navigate("scanned", { url: data });
+        }
+    };
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <Text>{text}</Text>
-            <BarCodeScanner
-                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-                barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
+        <SafeAreaView style={{ flex: 1 }}>            
+            <Camera
+                key={key}
                 style={{ flex: 1 }}
+                type={type}
+                onBarCodeScanned={handleBarCodeScanned}
+                barCodeScannerSettings={{
+                    barCodeTypes: [CameraType.back],
+                }}
             >
                 <View style={styles.centeredView}>
                     <View style={styles.cornerTopLeft}></View>
                     <View style={styles.cornerTopRight}></View>
                     <View style={styles.cornerBottomLeft}></View>
                     <View style={styles.cornerBottomRight}></View>
-                </View>
-            </BarCodeScanner>
-            {/* <View style={{ width: "100%" }}>
-                <Button onPress={() => resetScanner()} title="Escanear novemente"></Button>
-            </View> */}
+                </View>               
+            </Camera>
         </SafeAreaView>
     );
 }
