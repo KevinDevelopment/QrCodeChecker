@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, Button, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from "react-native-safe-area-context"
 import { BarCodeScanner } from 'expo-barcode-scanner';
@@ -11,19 +11,24 @@ export function Scanner() {
     const [text, setText] = useState("Urls escaneadas apareceram aqui");
     const navigation = useNavigation();
 
-    async function asKForCameraPermission() {
+    async function askForCameraPermission() {
         const { status } = await BarCodeScanner.requestPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert(
+                "Permissão Necessária",
+                "Este aplicativo precisa de acesso à câmera para escanear QR codes.",
+                [
+                    { text: "Cancelar", style: "cancel" },
+                    { text: "Permitir", onPress: () => BarCodeScanner.requestPermissionsAsync() }
+                ]
+            );
+        }
         setHasPermission(status === "granted");
     }
 
     function scanUrl() {
         navigation.navigate("scanned", { url: text });
-    }
-
-    useEffect(() => {
-        asKForCameraPermission()
-        setScanned(false);
-    }, [])
+    }    
 
     const handleBarCodeScanned = ({ type, data }: any) => {
         setScanned(true);
@@ -33,18 +38,18 @@ export function Scanner() {
     };
 
     if (hasPermission === null) {
-        <View style={styles.container}>
-            <Text>Conceda permissão pra acessar a camera</Text>
-        </View>
+        return <View style={styles.container}><Text>Requisitando permissão...</Text></View>;
     }
-
+    
     if (hasPermission === false) {
-        <View style={styles.container}>
-            <Text>Sem acesso a camera</Text>
-            <View style={{ width: "95%", marginTop: 16 }}>
-                <Button onPress={() => asKForCameraPermission()} title="Permitir"></Button>
+        return (
+            <View style={styles.container}>
+                <Text>Sem acesso à câmera</Text>
+                <View style={{ width: "95%", marginTop: 16 }}>
+                    <Button onPress={askForCameraPermission} title="Permitir"></Button>
+                </View>
             </View>
-        </View>
+        );
     }
 
     if (!hasPermission) {
